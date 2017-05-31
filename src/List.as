@@ -20,32 +20,11 @@
 			_itemFactory = value;
 		}
 
-		private var _dataProvider:Collection;
-
-		public function get dataProvider():Collection {
-			return _dataProvider;
-		}
-
-		public function set dataProvider(value:Collection):void {
-			if (_dataProvider == value) {
-				return;
-			}
-			if (_dataProvider) {
-				_dataProvider.removeEventListener(CollectionEventType.ADD_ITEM, dataProvider_addItemHandler);
-				_dataProvider.removeEventListener(CollectionEventType.REMOVE_ITEM, dataProvider_removeItemHandler);
-				_dataProvider.removeEventListener(Event.CHANGE, dataProvider_changeHandler);
-			}
-			_dataProvider = value;
-			if (_dataProvider) {
-				_dataProvider.addEventListener(CollectionEventType.ADD_ITEM, dataProvider_addItemHandler);
-				_dataProvider.addEventListener(CollectionEventType.REMOVE_ITEM, dataProvider_removeItemHandler);
-				_dataProvider.addEventListener(Event.CHANGE, dataProvider_changeHandler);
-			}
-		}
-
 		public function List() { }
 
 		override protected function initialize():void {
+			if (isInitialized) return;
+
 			scrollRect = new Rectangle(0, 0, 240, 365);
 			scroll_bar.addEventListener(Event.CHANGE, scrollbar_changeHandler);
 		}
@@ -58,24 +37,26 @@
 			}
 
 			var shiftY:Number = 0;
-			var length:int = _dataProvider.getLength();
+			var length:int = dataProvider.getLength();
 			for (var i:int = 0; i < length; i++) {
-				var dataItem:Object = _dataProvider.getItemAt(i);
-				var item:BaseControl = itemFactory(dataItem);
+				var dataItem:Object = dataProvider.getItemAt(i);
+				var item:BaseControl = itemFactory(i);
+				item.dataProvider = dataProvider;
 				item.data = dataItem;
+				item.own = this;
 				item.addEventListener(BaseControlEventType.SELECTED, item_selectedHandler);
-				item.addEventListener(BaseControlEventType.DELETED, item_deletedHandler);
 				items_container.addChild(DisplayObject(item));
 				item.y = shiftY;
 				shiftY = item.y + item.height;
 			}
+
+			scroll_bar.visible = items_container.height > 365;
 		}
 
 		override protected function dispose():void {
 			while (items_container.numChildren) {
 				var childAt:* = items_container.getChildAt(0);
 				childAt.removeEventListener(BaseControlEventType.SELECTED, item_selectedHandler);
-				childAt.removeEventListener(BaseControlEventType.DELETED, item_deletedHandler);
 				items_container.removeChildAt(0);
 			}
 			_itemFactory = null;
@@ -93,15 +74,15 @@
 			}
 		}
 
-		private function dataProvider_addItemHandler(e:Event):void {
+		override protected function dataProvider_addItemHandler(e:Event):void {
 			draw();
 		}
 
-		private function dataProvider_removeItemHandler(e:Event):void {
-			draw();
+		override protected function dataProvider_removeItemHandler(e:Event):void {
+			redraw();
 		}
 
-		private function dataProvider_changeHandler(e:Event):void {
+		override protected function dataProvider_changeHandler(e:Event):void {
 			redraw();
 		}
 
@@ -116,12 +97,8 @@
 			redraw();
 		}
 
-		private function item_deletedHandler(e:DataEvent):void {
-			var deletedItem:BaseControl = BaseControl(e.data);
-			var childIndex:int = items_container.getChildIndex(deletedItem);
-			items_container.removeChildAt(childIndex);
-			dataProvider.removeItem(deletedItem.data);
-			redraw();
+		override public function doDelete(indices:Array):void {
+			dataProvider.removeItemAt(indices);
 		}
 
 		private function scrollbar_changeHandler(e:Event):void {

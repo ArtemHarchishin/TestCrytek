@@ -10,8 +10,8 @@
 		override protected function initialize():void {
 			var list:List = new List();
 			list.dataProvider = new Collection(data as Array);
-			list.itemFactory = function (data:Object):BaseControl {
-				var item:Category = new Category();
+			list.itemFactory = function (i:int):BaseControl {
+				var item:Control = new Control(i);
 				return item;
 			};
 			list_container.addChild(list);

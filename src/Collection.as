@@ -37,6 +37,23 @@ package {
 			dispatchEventWith(CollectionEventType.ADD_ITEM);
 		}
 
+		public function removeItemAt(indices:Array):Object {
+			var branch:Array = data as Array;
+			var index:int;
+			var indexCount:int = indices.length - 1;
+			for(var i:int = 0; i < indexCount; i++)
+			{
+				index = indices[i] as int;
+				branch = branch[index]['items'] as Array;
+			}
+			var lastIndex:int = indices[indexCount];
+			var item:Object = branch[lastIndex];
+			branch.splice(lastIndex, 1);
+			indices.length = 0;
+			dispatchEventWith(CollectionEventType.REMOVE_ITEM);
+			return item;
+		}
+
 		public function removeItem(item:Object):void {
 			var i:int = data.indexOf(item);
 			data.splice(i, 1);
