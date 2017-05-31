@@ -6,10 +6,10 @@
 
 		public function Main() {
 			var arr:Array = [
-				{label: "John", items: [{label: "1", items: [{label: "2"}]}]},
-				{label: "Phil", items: [{label: "1", items: [{label: "2"}]}]},
-				{label: "Psytrance party", items: [{label: "1", items: [{label: "2"}]}]},
-				{label: "Singing Fountains", items: [{label: "1", items: [{label: "2"}]}]},
+				{label: "John", items: [], selectable: false},
+				{label: "Phil", items: [{label: "1", items: []}]},
+				{label: "Psytrance party", items: [{label: "1", items: [{label: "2"}]}], selectable: false},
+				{label: "Singing Fountains", items: [{label: "1", items: [{label: "2"}]}], deletable: false},
 				{label: "Drags", items: [{label: "1", items: [{label: "2"}]}]},
 				{label: "Rock'n'Roll", items: [{label: "1", items: [{label: "2"}]}]},
 				{label: "item3", items: [{label: "1", items: [{label: "2"}]}]},

@@ -32,15 +32,15 @@ package {
 			return data[index];
 		}
 
-		public function removeItemAt(index:int):Object {
-			var item:Object = data[index];
-			data.splice(index, 1);
-			return item;
+		public function addItem(item:Object):void {
+			data.push(item);
+			dispatchEventWith(CollectionEventType.ADD_ITEM);
 		}
 
 		public function removeItem(item:Object):void {
 			var i:int = data.indexOf(item);
 			data.splice(i, 1);
+			dispatchEventWith(CollectionEventType.REMOVE_ITEM);
 		}
 
 		public function getLength():int {

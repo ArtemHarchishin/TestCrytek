@@ -31,13 +31,16 @@
 				return;
 			}
 			if (_dataProvider) {
+				_dataProvider.removeEventListener(CollectionEventType.ADD_ITEM, dataProvider_addItemHandler);
+				_dataProvider.removeEventListener(CollectionEventType.REMOVE_ITEM, dataProvider_removeItemHandler);
 				_dataProvider.removeEventListener(Event.CHANGE, dataProvider_changeHandler);
 			}
 			_dataProvider = value;
 			if (_dataProvider) {
+				_dataProvider.addEventListener(CollectionEventType.ADD_ITEM, dataProvider_addItemHandler);
+				_dataProvider.addEventListener(CollectionEventType.REMOVE_ITEM, dataProvider_removeItemHandler);
 				_dataProvider.addEventListener(Event.CHANGE, dataProvider_changeHandler);
 			}
-			draw();
 		}
 
 		public function List() { }
@@ -70,10 +73,13 @@
 
 		override protected function dispose():void {
 			while (items_container.numChildren) {
-				items_container.getChildAt(0).removeEventListener(BaseControlEventType.SELECTED, item_selectedHandler);
+				var childAt:* = items_container.getChildAt(0);
+				childAt.removeEventListener(BaseControlEventType.SELECTED, item_selectedHandler);
+				childAt.removeEventListener(BaseControlEventType.DELETED, item_deletedHandler);
 				items_container.removeChildAt(0);
 			}
 			_itemFactory = null;
+			dataProvider = null;
 		}
 
 		private function redraw():void {
@@ -87,8 +93,16 @@
 			}
 		}
 
-		private function dataProvider_changeHandler(e:Event):void {
+		private function dataProvider_addItemHandler(e:Event):void {
 			draw();
+		}
+
+		private function dataProvider_removeItemHandler(e:Event):void {
+			draw();
+		}
+
+		private function dataProvider_changeHandler(e:Event):void {
+			redraw();
 		}
 
 		private function item_selectedHandler(e:DataEvent):void {

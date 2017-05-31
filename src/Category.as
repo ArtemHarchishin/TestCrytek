@@ -25,6 +25,8 @@
 			if (_data !== null) {
 				_label = dataToLabel(data);
 				_items = dataToItems(data);
+				_selectable = dataToSelectable(data);
+				_deletable = dataToDeletable(data);
 			}
 		}
 
@@ -38,7 +40,14 @@
 			if (!isInitialized) return;
 			tf_label.text = label;
 
-			expander.gotoAndStop(selected ? 2 : 1);
+			if (selectable) {
+				expander.visible = true;
+				expander.gotoAndStop(selected ? 2 : 1);
+			} else {
+				expander.visible = false;
+			}
+
+			btn_delete.visible = deletable;
 
 			while (items_container.numChildren) {
 				items_container.removeChildAt(0);
@@ -68,6 +77,7 @@
 		}
 
 		private function hitarea_clickHandler(e:MouseEvent):void {
+			if (!selectable) return;
 			selected = !selected;
 		}
 

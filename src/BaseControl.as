@@ -81,6 +81,58 @@ package {
 			draw();
 		}
 
+		protected var _selectableField:String = "selectable";
+
+		public function get selectableField():String {
+			return _selectableField;
+		}
+
+		public function set selectableField(value:String):void {
+			if (_selectableField == value) {
+				return;
+			}
+			_selectableField = value;
+		}
+
+		protected var _selectable:Boolean;
+
+		public function get selectable():Boolean {
+			return _selectable;
+		}
+
+		public function set selectable(value:Boolean):void {
+			if (_selectable == value) {
+				return;
+			}
+			_selectable = value;
+		}
+
+		protected var _deletableField:String = "selectable";
+
+		public function get deletableField():String {
+			return _deletableField;
+		}
+
+		public function set deletableField(value:String):void {
+			if (_deletableField == value) {
+				return;
+			}
+			_deletableField = value;
+		}
+
+		protected var _deletable:Boolean;
+
+		public function get deletable():Boolean {
+			return _deletable;
+		}
+
+		public function set deletable(value:Boolean):void {
+			if (_deletable == value) {
+				return;
+			}
+			_deletable = value;
+		}
+
 		protected var _data:Object;
 
 		public function get data():Object {
@@ -141,6 +193,40 @@ package {
 				return data as Array;
 			}
 			return [];
+		}
+
+		public function dataToSelectable(data:Object):Boolean {
+			var result:Object;
+			if (_selectableField != null && data && data.hasOwnProperty(_selectableField)) {
+				result = data[_selectableField];
+				if (result is Boolean) {
+					return result as Boolean;
+				}
+			}
+			else if (data is Boolean) {
+				return data as Boolean;
+			}
+			else if (data !== null) {
+				return Boolean(data);
+			}
+			return false;
+		}
+
+		public function dataToDeletable(data:Object):Boolean {
+			var result:Object;
+			if (_selectableField != null && data && data.hasOwnProperty(_selectableField)) {
+				result = data[_selectableField];
+				if (result is Boolean) {
+					return result as Boolean;
+				}
+			}
+			else if (data is Boolean) {
+				return data as Boolean;
+			}
+			else if (data !== null) {
+				return Boolean(data);
+			}
+			return false;
 		}
 
 		protected function commitData():void {
