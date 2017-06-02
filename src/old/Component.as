@@ -1,4 +1,4 @@
-﻿package {
+﻿package old {
 	public class Component extends BaseControl {
 
 		public function Component() {

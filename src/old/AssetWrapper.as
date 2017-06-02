@@ -1,4 +1,4 @@
-package {
+package old {
 	import flash.display.MovieClip;
 	import flash.text.TextField;
 

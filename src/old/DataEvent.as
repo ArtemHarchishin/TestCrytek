@@ -1,4 +1,4 @@
-package {
+package old {
 	import flash.events.Event;
 
 	public class DataEvent extends Event {

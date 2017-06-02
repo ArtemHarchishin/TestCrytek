@@ -1,4 +1,4 @@
-﻿package {
+﻿package old {
 	import flash.display.DisplayObject;
 	import flash.events.Event;
 	import flash.geom.Rectangle;

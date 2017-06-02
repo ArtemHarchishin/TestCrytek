@@ -2,6 +2,8 @@
 
 	import flash.display.MovieClip;
 
+	import old.Component;
+
 	public class Main extends MovieClip {
 
 		public function Main() {
