@@ -1,19 +1,23 @@
 package {
-	import flash.display.Sprite;
+	public class Component extends Control {
+		private var _sortHandler:SortHandler;
 
-	public class Component extends Sprite {
-		public function Component() {
-			init();
-			if(parent != null)
-			{
-				parent.addChild(this);
-			}
+		public function Component(dataProvider:Collection) {
+			super(dataProvider);
 		}
 
-		protected function init():void
-		{
-			addChildren();
-			invalidate();
+		override protected function initialize():void {
+			var component:ComponentView = new ComponentView();
+			component.sortByOldCheckbox.label = "newest to oldest";
+			var listControl:List = new List(dataProvider);
+			_sortHandler = new SortHandler(component, listControl, dataProvider);
+			component.listContainer.addChild(listControl);
+			addChild(component);
+		}
+
+		override protected function dispose():void {
+			_sortHandler.dispose();
+			_sortHandler = null;
 		}
 	}
 }

@@ -1,4 +1,4 @@
-package old {
+package {
 	import flash.events.Event;
 
 	public class DataEvent extends Event {
@@ -12,7 +12,6 @@ package old {
 		public function DataEvent(type:String, data:Object = null) {
 			super(type);
 			_data = data;
-
 		}
 
 		override public function clone():Event {
