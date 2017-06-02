@@ -1,6 +1,5 @@
 ﻿package {
 
-	import flash.display.DisplayObject;
 	import flash.events.Event;
 	import flash.events.MouseEvent;
 
@@ -26,7 +25,12 @@
 		}
 
 		override public function deselect():void {
-			// empty
+			trace(label, _items.length);
+			o(_items);
+			if (_items.length == 0) {
+				_selected = false;
+				draw();
+			}
 		}
 
 		override protected function commitData():void {
@@ -103,21 +107,21 @@
 			indices.unshift(index);
 			if (own == null) {
 				dataProvider.removeItemAt(indices);
+				draw();
 			} else {
 				own.doDelete(indices);
 			}
 		}
 
 		override protected function dataProvider_addItemHandler(e:Event):void {
-//			draw();
+			draw();
 		}
 
 		override protected function dataProvider_removeItemHandler(e:Event):void {
-//			draw();
 		}
 
 		override protected function dataProvider_changeHandler(e:Event):void {
-//			draw();
+			draw();
 		}
 
 		private function hitarea_clickHandler(e:MouseEvent):void {

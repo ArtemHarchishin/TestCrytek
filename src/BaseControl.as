@@ -144,7 +144,7 @@ package {
 			_selectable = value;
 		}
 
-		protected var _deletableField:String = "selectable";
+		protected var _deletableField:String = "deletable";
 
 		public function get deletableField():String {
 			return _deletableField;
@@ -218,7 +218,8 @@ package {
 		}
 
 		public function deselect():void {
-			selected = false;
+			_selected = false;
+			draw();
 		}
 
 		public function dataToLabel(data:Object):String {
@@ -251,9 +252,6 @@ package {
 			}
 			else if (data is Array) {
 				return data as Array;
-			}
-			else if (data !== null) {
-				return Array(data);
 			}
 			return [];
 		}

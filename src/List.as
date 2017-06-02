@@ -79,7 +79,7 @@
 		}
 
 		override protected function dataProvider_removeItemHandler(e:Event):void {
-			redraw();
+			draw();
 		}
 
 		override protected function dataProvider_changeHandler(e:Event):void {
