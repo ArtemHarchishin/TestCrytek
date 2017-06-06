@@ -2,8 +2,9 @@ package {
 	import flash.events.MouseEvent;
 
 	public class Item extends Control {
+		protected var _view:ItemView;
 
-		private function get view():ItemView {return _view as ItemView;}
+		override protected function get view():View {return _view as View;}
 
 		public function Item(data:Object) {
 			super(data);
@@ -11,8 +12,8 @@ package {
 
 		override protected function initialize():void {
 			_view = new ItemView();
-			view.hittingArea.addEventListener(MouseEvent.CLICK, clickHandler);
-			view.btnDelete.addEventListener(MouseEvent.CLICK, btnDelete_clickHandler);
+			_view.hittingArea.addEventListener(MouseEvent.CLICK, clickHandler);
+			_view.btnDelete.addEventListener(MouseEvent.CLICK, btnDelete_clickHandler);
 			addChild(_view);
 		}
 
@@ -21,18 +22,19 @@ package {
 		}
 
 		override protected function dispose():void {
-			view.hittingArea.removeEventListener(MouseEvent.CLICK, clickHandler);
-			view.btnDelete.removeEventListener(MouseEvent.CLICK, btnDelete_clickHandler);
+			_view.hittingArea.removeEventListener(MouseEvent.CLICK, clickHandler);
+			_view.btnDelete.removeEventListener(MouseEvent.CLICK, btnDelete_clickHandler);
 			removeChild(_view);
+			_view = null;
 		}
 
-		private function clickHandler(e:MouseEvent):void {
+		protected function clickHandler(e:MouseEvent):void {
 			selected = !selected;
 			dispatchEvent(new DataEvent(ItemEventType.SELECT, this));
 		}
 
-		private function btnDelete_clickHandler(e:MouseEvent):void {
-			dispatchEvent(new DataEvent(ItemEventType.DELETE, data));
+		protected function btnDelete_clickHandler(e:MouseEvent):void {
+			dispatchEvent(new DataEvent(ItemEventType.DELETE, this));
 		}
 	}
 }

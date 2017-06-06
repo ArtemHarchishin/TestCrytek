@@ -1,10 +1,18 @@
 package {
 	import flash.events.MouseEvent;
 
-	public class GroupItem extends Item {
+	public class GroupItem extends Control {
 		private var _items:Array;
 
-		private function get view():GroupItemView {return _view as GroupItemView;}
+		private var _view:GroupItemView;
+
+		override protected function get view():View {return _view as View;}
+
+		override public function get height():Number {
+			if (!selected) return _view.hittingArea.height;
+			if (!_items.length) return _view.hittingArea.height;
+			return super.height;
+		}
 
 		public function GroupItem(data:Object) {
 			super(data);
@@ -12,20 +20,65 @@ package {
 
 		override protected function initialize():void {
 			_view = new GroupItemView();
-			view.hittingArea.addEventListener(MouseEvent.CLICK, clickHandler);
-			view.btnDelete.addEventListener(MouseEvent.CLICK, btnDelete_clickHandler);
+			_view.hittingArea.addEventListener(MouseEvent.CLICK, clickHandler);
+			_view.btnDelete.addEventListener(MouseEvent.CLICK, btnDelete_clickHandler);
 			addChild(_view);
 		}
 
 		override protected function commitData():void {
-			view.label = dataToLabel(data);
-			_items = dataToItems(data);
+			_view.label = dataToLabel(data);
+			reset();
+			_view.toggleSelect.visible = Boolean(_items.length);
+		}
+
+		override protected function dispose():void {
+			resetView();
+			resetItems();
+			removeChild(_view);
+		}
+
+		public function reset():void {
+			resetView();
+
+			resetItems();
+
+			_items = [];
+
+			var datum:Array = dataToItems(data);
+			var length:uint = datum.length;
+			for (var i:int = 0; i < length; i++) {
+				var object:Object = datum[i];
+				var item:Control = new Item(object);
+				item.addEventListener(ItemEventType.SELECT, dispatchEvent);
+				item.addEventListener(ItemEventType.DELETE, dispatchEvent);
+				_items.push(item);
+				_view.itemsContainer.addChild(item);
+			}
+
+			updatePosition();
+		}
+
+		public function has(selectedItem:Control):Boolean {
 			var length:uint = _items.length;
 			for (var i:int = 0; i < length; i++) {
 				var item:Item = _items[i];
-				view.itemsContainer.addChild(item);
+				if (item == selectedItem) return true;
 			}
-			updatePosition();
+			return false;
+		}
+
+		private function resetView():void {
+			while (_view.itemsContainer.numChildren) {
+				_view.itemsContainer.removeChildAt(0);
+			}
+		}
+
+		private function resetItems():void {
+			if (_items) {
+				removeHandlers();
+				_items.length = 0;
+				_items = null;
+			}
 		}
 
 		private function updatePosition():void {
@@ -38,38 +91,34 @@ package {
 			}
 		}
 
-		override protected function dispose():void {
-			view.hittingArea.removeEventListener(MouseEvent.CLICK, clickHandler);
-			view.btnDelete.removeEventListener(MouseEvent.CLICK, btnDelete_clickHandler);
-			removeChild(view);
+		private function removeHandlers():void {
+			if (_items == null) return;
+
+			var length:uint = _items.length;
+			for (var i:int = 0; i < length; i++) {
+				var item:Control = _items[i];
+				item.removeEventListener(ItemEventType.SELECT, dispatchEvent);
+				item.removeEventListener(ItemEventType.DELETE, dispatchEvent);
+			}
 		}
 
 		private function dataToItems(data:Object):Array {
-			var items:Array = [];
-			var datum:Array;
+			var items:Array;
 			if (data && data.hasOwnProperty("items") && data['items'] is Array) {
-				datum = data["items"];
+				return data["items"] as Array;
 			} else if (data is Array) {
-				datum = data as Array;
-			} else {
-				datum = items;
+				return data as Array;
 			}
-			var length:uint = datum.length;
-			for (var i:int = 0; i < length; i++) {
-				var object:Object = datum[i];
-				var item:Item = new Item(object);
-				items.push(item);
-			}
-			return items;
+			return [];
 		}
 
 		private function clickHandler(e:MouseEvent):void {
 			selected = !selected;
-			dispatchEvent(new DataEvent(ItemEventType.SELECT, this));
+			dispatchEvent(new DataEvent(ItemEventType.GROUP_SELECT, this));
 		}
 
 		private function btnDelete_clickHandler(e:MouseEvent):void {
-			dispatchEvent(new DataEvent(ItemEventType.DELETE, data));
+			dispatchEvent(new DataEvent(ItemEventType.GROUP_DELETE, this));
 		}
 	}
 }

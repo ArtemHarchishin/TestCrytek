@@ -69,7 +69,7 @@
 			moveTo(item, checkBox.x, checkBox.y + checkBox.height);
 			addChild(item);
 
-			var groupedCollection:Collection = new Collection(groupedListData);
+			var groupedCollection:GroupedCollection = new GroupedCollection(groupedListData);
 
 			var groupedList:GroupedList = new GroupedList(groupedCollection);
 			moveTo(groupedList, checkBox.x, item.y + item.height);

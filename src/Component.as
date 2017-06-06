@@ -1,10 +1,11 @@
 package {
 	public class Component extends Control {
+		protected var _view:ComponentView;
 
 		private var _checkBoxSort:CheckBox;
 		private var _list:List;
 
-		private function get view():ComponentView {return _view as ComponentView;}
+		override protected function get view():View {return _view as View;}
 
 		public function Component(data:Collection) {
 			super(data);
@@ -15,10 +16,10 @@ package {
 
 			_checkBoxSort = new CheckBox({label: "newest to oldest"});
 			_checkBoxSort.addEventListener(ItemEventType.SELECT, checkBox_selectHandler);
-			view.checkboxContainer.addChild(_checkBoxSort);
+			_view.checkboxContainer.addChild(_checkBoxSort);
 
 			_list = new List(data as Collection);
-			view.listContainer.addChild(_list);
+			_view.listContainer.addChild(_list);
 
 			addChild(view);
 		}
@@ -28,9 +29,10 @@ package {
 		}
 
 		override protected function dispose():void {
-			view.listContainer.removeChild(_list);
-			view.checkboxContainer.removeChild(_checkBoxSort);
+			_view.listContainer.removeChild(_list);
+			_view.checkboxContainer.removeChild(_checkBoxSort);
 			removeChild(view);
+			_view = null;
 		}
 
 		private function checkBox_selectHandler(e:DataEvent):void {

@@ -2,6 +2,7 @@ package {
 	import flash.events.MouseEvent;
 
 	public class CheckBox extends Control {
+		protected var _view:CheckBoxView;
 
 		public function CheckBox(data:Object) {
 			super(data);
@@ -16,6 +17,7 @@ package {
 		override protected function dispose():void {
 			_view.removeEventListener(MouseEvent.CLICK, view_clickHandler);
 			removeChild(_view);
+			_view = null;
 		}
 
 		override protected function commitData():void {

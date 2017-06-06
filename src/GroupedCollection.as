@@ -2,8 +2,7 @@ package {
 	import flash.events.Event;
 	import flash.events.EventDispatcher;
 
-	public class Collection extends EventDispatcher {
-
+	public class GroupedCollection extends EventDispatcher {
 		private var _data:Array;
 
 		public function get data():Array {
@@ -17,11 +16,17 @@ package {
 			}
 		}
 
-		public function Collection(data:Array = null) {
+		public function GroupedCollection(data:Array = null) {
 			if (!data) {
 				data = [];
 			}
 			_data = data;
+		}
+
+		public function removeGroupItem(item:Object):void {
+			var i:int = data.indexOf(item);
+			data.splice(i, 1);
+			dispatchEventWith(CollectionEventType.REMOVE_GROUP_ITEM, item);
 		}
 
 		public function getItemAt(index:int):Object {

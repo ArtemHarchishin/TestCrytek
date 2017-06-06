@@ -4,7 +4,6 @@ package {
 
 	public class GroupItemView extends View {
 		private var _tfLabel:TextField;
-		private var _toggleSelect:MovieClip;
 		private var _hitArea:MovieClip;
 
 		override public function set selected(value:Boolean):void {
@@ -16,6 +15,12 @@ package {
 			if (_tfLabel.text != value) {
 				_tfLabel.text = value;
 			}
+		}
+
+		private var _toggleSelect:MovieClip;
+
+		public function get toggleSelect():MovieClip {
+			return _toggleSelect;
 		}
 
 		private var _itemsContainer:MovieClip;

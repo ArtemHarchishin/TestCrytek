@@ -4,8 +4,6 @@ package {
 	import flash.utils.getQualifiedClassName;
 
 	public class Control extends Sprite {
-		protected var _view:View;
-
 		protected var _selected:Boolean;
 
 		public function get selected():Boolean {
@@ -15,7 +13,7 @@ package {
 		public function set selected(value:Boolean):void {
 			if (_selected != value) {
 				_selected = value;
-				_view.selected = value;
+				view.selected = value;
 			}
 		}
 
@@ -30,6 +28,8 @@ package {
 		public function get isInitialized():Boolean {
 			return _isInitialized;
 		}
+
+		protected function get view():View {return null;}
 
 		public function Control(data:Object) {
 			_isInitialized = false;
@@ -59,15 +59,15 @@ package {
 		}
 
 		protected function initialize():void {
-			throw new Error(this + "It's abstract method. Need implement in " + getQualifiedClassName(this));
+			throw new Error("initialize - It's abstract method. Need implement in " + getQualifiedClassName(this));
 		}
 
 		protected function dispose():void {
-			throw new Error("It's abstract method. Need implement in " + getQualifiedClassName(this));
+			throw new Error("dispose - It's abstract method. Need implement in " + getQualifiedClassName(this));
 		}
 
 		protected function commitData():void {
-			throw new Error("It's abstract method. Need implement in " + getQualifiedClassName(this));
+			throw new Error("commitData - It's abstract method. Need implement in " + getQualifiedClassName(this));
 		}
 
 		private function addedToStageHandler(e:Event):void {
@@ -80,7 +80,6 @@ package {
 		private function removedFromStageHandler(e:Event):void {
 			removeEventListener(Event.REMOVED_FROM_STAGE, removedFromStageHandler);
 			dispose();
-			_view = null;
 			_data = null;
 			_isInitialized = false;
 		}

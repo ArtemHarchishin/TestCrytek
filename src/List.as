@@ -1,9 +1,11 @@
 package {
 	public class List extends Control {
-		private var _items:Array;
-		private var _selectedItem:Control;
+		protected var _items:Array;
+		protected var _selectedItem:Control;
 
-		private function get view():ListView {return _view as ListView;}
+		protected var _view:ListView;
+
+		override protected function get view():View {return _view as View;}
 
 		protected var _itemType:Class = Item;
 
@@ -31,16 +33,17 @@ package {
 
 		override protected function commitData():void {
 			data.addEventListener(CollectionEventType.REMOVE_ITEM, data_removeItemHandler);
-			data.addEventListener(CollectionEventType.ADD_ITEM, dataProvider_addItemHandler);
+			data.addEventListener(CollectionEventType.ADD_ITEM, data_addItemHandler);
 			reset();
 		}
 
 		override protected function dispose():void {
+			data.removeEventListener(CollectionEventType.ADD_ITEM, data_addItemHandler);
+			data.removeEventListener(CollectionEventType.REMOVE_ITEM, data_removeItemHandler);
 			resetView();
 			resetItems();
-			data.removeEventListener(CollectionEventType.ADD_ITEM, dataProvider_addItemHandler);
-			data.removeEventListener(CollectionEventType.REMOVE_ITEM, data_removeItemHandler);
 			removeChild(_view);
+			_view = null;
 		}
 
 		public function reset():void {
@@ -57,7 +60,7 @@ package {
 				item.addEventListener(ItemEventType.SELECT, item_selectHandler);
 				item.addEventListener(ItemEventType.DELETE, item_deleteHandler);
 				_items.push(item);
-				view.addItem(item);
+				_view.addItem(item);
 			}
 
 			updatePosition();
@@ -69,8 +72,8 @@ package {
 		}
 
 		private function resetView():void {
-			while (view.numItems) {
-				view.removeItemAt(0);
+			while (_view.numItems) {
+				_view.removeItemAt(0);
 			}
 		}
 
@@ -93,7 +96,7 @@ package {
 			}
 		}
 
-		private function updatePosition():void {
+		protected function updatePosition():void {
 			var shiftY:Number = 0;
 			var length:int = _items.length;
 			for (var i:int = 0; i < length; i++) {
@@ -103,28 +106,28 @@ package {
 			}
 		}
 
-		private function item_deleteHandler(e:DataEvent):void {
-			data.removeItem(e.data);
+		protected function item_deleteHandler(e:DataEvent):void {
+			data.removeItem((e.data as Item).data);
 		}
 
-		private function dataProvider_addItemHandler(e:DataEvent):void {
+		private function data_addItemHandler(e:DataEvent):void {
 			var item:Control = new itemType(e.data);
 			item.addEventListener(ItemEventType.DELETE, item_deleteHandler);
 			item.addEventListener(ItemEventType.SELECT, item_selectHandler);
 
-			view.addItem(item);
+			_view.addItem(item);
 			_items.push(item);
 
 			updatePosition();
 		}
 
-		private function data_removeItemHandler(e:DataEvent):void {
+		protected function data_removeItemHandler(e:DataEvent):void {
 			var numItems:int = _items.length;
 			for (var i:int = 0; i < numItems; i++) {
 				var item:Control = _items[i];
 				if (item.data == e.data) {
 					if (item == _selectedItem) _selectedItem = null;
-					view.removeItem(item);
+					_view.removeItem(item);
 					var indexOf:int = _items.indexOf(item);
 					_items.splice(indexOf, 1);
 					break;
@@ -134,7 +137,7 @@ package {
 			updatePosition();
 		}
 
-		private function item_selectHandler(e:DataEvent):void {
+		protected function item_selectHandler(e:DataEvent):void {
 			if (_selectedItem == e.data) {
 				return;
 			}
