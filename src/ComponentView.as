@@ -9,29 +9,22 @@
 			return _listContainer;
 		}
 
-		private var _sortByOldCheckbox:CheckBoxView;
+		private var _checkboxContainer:MovieClip;
 
-		public function get sortByOldCheckbox():CheckBoxView {
-			return _sortByOldCheckbox;
+		public function get checkboxContainer():MovieClip {
+			return _checkboxContainer;
 		}
 
 		public function ComponentView() {
 			_listContainer = this["list_container"];
-			_sortByOldCheckbox = this["sort_by_old"];
+			_checkboxContainer = this["check_box_container"];
 		}
 
-		override protected function initialize():void {
-			_sortByOldCheckbox.addEventListener(CheckBoxEventType.SELECT, sortByOldCheckbox_selectHandler);
-		}
+		override protected function initialize():void {}
 
 		override protected function dispose():void {
-			_sortByOldCheckbox.removeEventListener(CheckBoxEventType.SELECT, sortByOldCheckbox_selectHandler);
 			_listContainer = null;
-			_sortByOldCheckbox = null;
-		}
-
-		private function sortByOldCheckbox_selectHandler(e:Event):void {
-			dispatchEvent(new ViewEvent(ComponentEventType.NEW_OLD_SORT, this));
+			_checkboxContainer = null;
 		}
 	}
 

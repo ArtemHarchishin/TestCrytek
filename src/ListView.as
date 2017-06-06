@@ -33,7 +33,7 @@ package {
 			return _itemsContainer.removeChildAt(i);
 		}
 
-		public function addItem(item:View):DisplayObject {
+		public function addItem(item:DisplayObject):DisplayObject {
 			return _itemsContainer.addChild(item);
 		}
 
@@ -41,7 +41,7 @@ package {
 			return _itemsContainer.getChildAt(i);
 		}
 
-		public function removeItem(item:View):DisplayObject {
+		public function removeItem(item:DisplayObject):DisplayObject {
 			return _itemsContainer.removeChild(item);
 		}
 

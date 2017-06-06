@@ -1,30 +1,16 @@
 package {
 	import flash.display.MovieClip;
 	import flash.events.Event;
+	import flash.utils.getQualifiedClassName;
 
 	public class View extends MovieClip {
 
-		protected var _data:Object;
-
-		public function get data():Object {
-			return _data;
-		}
-
-		public function set data(value:Object):void {
-			if (_data != value) {
-				_data = value;
-				commitData();
-			}
-		}
-
-		protected var _selected:Boolean;
-
-		public function get selected():Boolean {
-			return _selected;
+		public function set label(value:String):void {
+			throw new Error("It's abstract setter. Need implement in " + getQualifiedClassName(this));
 		}
 
 		public function set selected(value:Boolean):void {
-			throw new Error("It's abstract method");
+			throw new Error("It's abstract setter. Need implement in " + getQualifiedClassName(this));
 		}
 
 		private var _isInitialized:Boolean;
@@ -40,35 +26,11 @@ package {
 		}
 
 		protected function initialize():void {
-			throw new Error("It's abstract method");
+			throw new Error("It's abstract method. Need implement in " + getQualifiedClassName(this));
 		}
 
 		protected function dispose():void {
-			throw new Error("It's abstract method");
-		}
-
-		protected function commitData():void {
-			throw new Error("It's abstract method");
-		}
-
-		public function dataToLabel(data:Object):String {
-			var result:Object;
-			if (data && data.hasOwnProperty("label")) {
-				result = data["label"];
-				if (result is String) {
-					return result as String;
-				}
-				else if (result) {
-					return result.toString();
-				}
-			}
-			else if (data is String) {
-				return data as String;
-			}
-			else if (data != null) {
-				return data.toString();
-			}
-			return "";
+			throw new Error("It's abstract method. Need implement in " + getQualifiedClassName(this));
 		}
 
 		private function addedToStageHandler(e:Event):void {
