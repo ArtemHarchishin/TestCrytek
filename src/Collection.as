@@ -35,8 +35,10 @@ package {
 
 		public function removeItem(item:Object):void {
 			var i:int = data.indexOf(item);
-			data.splice(i, 1);
-			dispatchEventWith(CollectionEventType.REMOVE_ITEM, item);
+			if (i >= 0) {
+				data.splice(i, 1);
+				dispatchEventWith(CollectionEventType.REMOVE_ITEM, item);
+			}
 		}
 
 		public function getLength():int {

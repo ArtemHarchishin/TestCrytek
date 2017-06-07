@@ -4,7 +4,12 @@ package {
 	public class Item extends Control {
 		protected var _view:ItemView;
 
-		override protected function get view():View {return _view as View;}
+		override public function set selected(value:Boolean):void {
+			if (_selected != value){
+				_selected = value;
+				_view.selected = value;
+			}
+		}
 
 		public function Item(data:Object) {
 			super(data);

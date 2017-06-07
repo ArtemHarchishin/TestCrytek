@@ -5,9 +5,7 @@ package {
 		private var _checkBoxSort:CheckBox;
 		private var _list:List;
 
-		override protected function get view():View {return _view as View;}
-
-		public function Component(data:Collection) {
+		public function Component(data:Object) {
 			super(data);
 		}
 
@@ -19,9 +17,16 @@ package {
 			_view.checkboxContainer.addChild(_checkBoxSort);
 
 			_list = new List(data as Collection);
+			_list.itemType = GroupItem;
+			_list.itemFactory = function ():Control {
+				var groupItem:GroupItem = new GroupItem();
+				groupItem.it
+				return groupItem;
+			};
+
 			_view.listContainer.addChild(_list);
 
-			addChild(view);
+			addChild(_view);
 		}
 
 		override protected function commitData():void {
@@ -31,7 +36,7 @@ package {
 		override protected function dispose():void {
 			_view.listContainer.removeChild(_list);
 			_view.checkboxContainer.removeChild(_checkBoxSort);
-			removeChild(view);
+			removeChild(_view);
 			_view = null;
 		}
 

@@ -25,23 +25,41 @@ package {
 
 		public function removeGroupItem(item:Object):void {
 			var i:int = data.indexOf(item);
-			data.splice(i, 1);
-			dispatchEventWith(CollectionEventType.REMOVE_GROUP_ITEM, item);
+			if (i >= 0) {
+				data.splice(i, 1);
+				dispatchEventWith(CollectionEventType.REMOVE_GROUP_ITEM, item);
+			}
+		}
+
+		public function removeItem(groupItem:Object, item:Object):void {
+			if (data.indexOf(groupItem) >= 0 && groupItem.hasOwnProperty("items") && groupItem["items"] is Array) {
+				var items:Array = groupItem['items'];
+				var i:int = items.indexOf(item);
+				if (i >= 0) {
+					items.splice(i, 1);
+					dispatchEventWith(CollectionEventType.REMOVE_ITEM, item);
+				}
+			}
+		}
+
+		public function addItem(groupItem:Object, item:Object):void {
+			groupItem['items'] ||= [];
+			groupItem['items'].push(item);
+			if (data.indexOf(groupItem) == -1) {
+				data.push(groupItem);
+				dispatchEventWith(CollectionEventType.ADD_GROUP_ITEM, groupItem);
+			} else {
+				dispatchEventWith(CollectionEventType.ADD_ITEM, item);
+			}
+		}
+
+		public function addGroupItem(item:Object):void {
+			data.push(item);
+			dispatchEventWith(CollectionEventType.ADD_GROUP_ITEM, item);
 		}
 
 		public function getItemAt(index:int):Object {
 			return data[index];
-		}
-
-		public function addItem(item:Object):void {
-			data.push(item);
-			dispatchEventWith(CollectionEventType.ADD_ITEM, item);
-		}
-
-		public function removeItem(item:Object):void {
-			var i:int = data.indexOf(item);
-			data.splice(i, 1);
-			dispatchEventWith(CollectionEventType.REMOVE_ITEM, item);
 		}
 
 		public function getLength():int {

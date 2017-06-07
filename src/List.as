@@ -1,11 +1,16 @@
 package {
+	import flash.events.Event;
+
 	public class List extends Control {
 		protected var _items:Array;
-		protected var _selectedItem:Control;
-
 		protected var _view:ListView;
 
-		override protected function get view():View {return _view as View;}
+		protected var _selectedItem:Control;
+
+		public function get selectedItem():Control {
+			if (_selectedItem == null) return new Control({});
+			return _selectedItem;
+		}
 
 		protected var _itemType:Class = Item;
 
@@ -32,21 +37,23 @@ package {
 		}
 
 		override protected function commitData():void {
+			data.addEventListener(CollectionEventType.RESET, data_resetHandler);
 			data.addEventListener(CollectionEventType.REMOVE_ITEM, data_removeItemHandler);
 			data.addEventListener(CollectionEventType.ADD_ITEM, data_addItemHandler);
 			reset();
 		}
 
 		override protected function dispose():void {
-			data.removeEventListener(CollectionEventType.ADD_ITEM, data_addItemHandler);
+			data.removeEventListener(CollectionEventType.RESET, data_resetHandler);
 			data.removeEventListener(CollectionEventType.REMOVE_ITEM, data_removeItemHandler);
+			data.removeEventListener(CollectionEventType.ADD_ITEM, data_addItemHandler);
 			resetView();
 			resetItems();
 			removeChild(_view);
 			_view = null;
 		}
 
-		public function reset():void {
+		private function reset():void {
 			resetView();
 
 			resetItems();
@@ -66,9 +73,19 @@ package {
 			updatePosition();
 		}
 
-		public function reverse():void {
+		private function reverse():void {
 			_items.reverse();
 			updatePosition();
+		}
+
+		protected function updatePosition():void {
+			var shiftY:Number = 0;
+			var length:int = _items.length;
+			for (var i:int = 0; i < length; i++) {
+				var item:Control = _items[i];
+				item.y = shiftY;
+				shiftY = item.y + item.height;
+			}
 		}
 
 		private function resetView():void {
@@ -96,29 +113,19 @@ package {
 			}
 		}
 
-		protected function updatePosition():void {
-			var shiftY:Number = 0;
-			var length:int = _items.length;
-			for (var i:int = 0; i < length; i++) {
-				var item:Control = _items[i];
-				item.y = shiftY;
-				shiftY = item.y + item.height;
-			}
-		}
-
 		protected function item_deleteHandler(e:DataEvent):void {
 			data.removeItem((e.data as Item).data);
 		}
 
-		private function data_addItemHandler(e:DataEvent):void {
-			var item:Control = new itemType(e.data);
-			item.addEventListener(ItemEventType.DELETE, item_deleteHandler);
-			item.addEventListener(ItemEventType.SELECT, item_selectHandler);
-
-			_view.addItem(item);
-			_items.push(item);
-
-			updatePosition();
+		protected function item_selectHandler(e:DataEvent):void {
+			if (_selectedItem == e.data) {
+				return;
+			}
+			if (_selectedItem) {
+				_selectedItem.selected = false;
+			}
+			_selectedItem = e.data as Control;
+			dispatchEvent(new Event(Event.SELECT));
 		}
 
 		protected function data_removeItemHandler(e:DataEvent):void {
@@ -137,14 +144,19 @@ package {
 			updatePosition();
 		}
 
-		protected function item_selectHandler(e:DataEvent):void {
-			if (_selectedItem == e.data) {
-				return;
-			}
-			if (_selectedItem) {
-				_selectedItem.selected = false;
-			}
-			_selectedItem = e.data as Control;
+		private function data_addItemHandler(e:DataEvent):void {
+			var item:Control = new itemType(e.data);
+			item.addEventListener(ItemEventType.DELETE, item_deleteHandler);
+			item.addEventListener(ItemEventType.SELECT, item_selectHandler);
+
+			_view.addItem(item);
+			_items.push(item);
+
+			updatePosition();
+		}
+
+		private function data_resetHandler(e:Event):void {
+			reset();
 		}
 	}
 }

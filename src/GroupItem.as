@@ -3,10 +3,14 @@ package {
 
 	public class GroupItem extends Control {
 		private var _items:Array;
-
 		private var _view:GroupItemView;
 
-		override protected function get view():View {return _view as View;}
+		override public function set selected(value:Boolean):void {
+			if (_selected != value){
+				_selected = value;
+				_view.selected = value;
+			}
+		}
 
 		override public function get height():Number {
 			if (!selected) return _view.hittingArea.height;
@@ -56,15 +60,6 @@ package {
 			}
 
 			updatePosition();
-		}
-
-		public function has(selectedItem:Control):Boolean {
-			var length:uint = _items.length;
-			for (var i:int = 0; i < length; i++) {
-				var item:Item = _items[i];
-				if (item == selectedItem) return true;
-			}
-			return false;
 		}
 
 		private function resetView():void {

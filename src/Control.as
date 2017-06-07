@@ -11,10 +11,7 @@ package {
 		}
 
 		public function set selected(value:Boolean):void {
-			if (_selected != value) {
-				_selected = value;
-				view.selected = value;
-			}
+			throw new Error("selected - It's abstract setter. Need implement in " + getQualifiedClassName(this));
 		}
 
 		protected var _data:Object;
@@ -25,11 +22,9 @@ package {
 
 		private var _isInitialized:Boolean;
 
-		public function get isInitialized():Boolean {
+		protected function get isInitialized():Boolean {
 			return _isInitialized;
 		}
-
-		protected function get view():View {return null;}
 
 		public function Control(data:Object) {
 			_isInitialized = false;
@@ -38,7 +33,7 @@ package {
 			addEventListener(Event.REMOVED_FROM_STAGE, removedFromStageHandler);
 		}
 
-		public function dataToLabel(data:Object):String {
+		protected function dataToLabel(data:Object):String {
 			var result:Object;
 			if (data && data.hasOwnProperty("label")) {
 				result = data["label"];

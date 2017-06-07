@@ -2,7 +2,15 @@ package {
 	import flash.events.MouseEvent;
 
 	public class CheckBox extends Control {
+
 		protected var _view:CheckBoxView;
+
+		override public function set selected(value:Boolean):void {
+			if (_selected != value) {
+				_selected = value;
+				_view.selected = value;
+			}
+		}
 
 		public function CheckBox(data:Object) {
 			super(data);
