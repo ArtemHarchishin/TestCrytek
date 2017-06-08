@@ -1,4 +1,7 @@
-package {
+package datas {
+	import events.CollectionEventType;
+	import events.DataEvent;
+
 	import flash.events.Event;
 	import flash.events.EventDispatcher;
 

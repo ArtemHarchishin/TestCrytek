@@ -1,4 +1,5 @@
-package {
+package datas {
+	import events.CollectionEventType;
 
 	public class GroupedCollection extends Collection {
 

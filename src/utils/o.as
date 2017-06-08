@@ -1,4 +1,4 @@
-package {
+package utils {
 	public function o(oObj:Object, sPrefix:String = ""):void {
 		sPrefix == "" ? sPrefix = "---" : sPrefix += "---";
 		for (var i:* in oObj) {

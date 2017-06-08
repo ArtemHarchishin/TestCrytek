@@ -1,6 +1,15 @@
-package {
+package controls {
+	import events.CollectionEventType;
+	import events.DataEvent;
+	import events.ItemEventType;
+
 	import flash.display.DisplayObject;
 	import flash.events.Event;
+
+	import IListView;
+	import ListView;
+
+	[Event(name="select", type="flash.events.Event")]
 
 	public class List extends Control {
 		protected var _items:Array;

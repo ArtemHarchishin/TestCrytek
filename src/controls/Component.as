@@ -1,4 +1,10 @@
-package {
+package controls {
+	import events.DataEvent;
+	import events.ItemEventType;
+
+	import CategoryItemView;
+	import ComponentView;
+
 	public class Component extends Control {
 		protected var _view:ComponentView;
 

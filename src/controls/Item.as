@@ -1,5 +1,10 @@
-package {
+package controls {
+	import events.DataEvent;
+	import events.ItemEventType;
+
 	import flash.events.MouseEvent;
+
+	import ItemView;
 
 	public class Item extends Control {
 		protected var _view:ItemView;
@@ -40,7 +45,7 @@ package {
 		}
 
 		protected function btnDelete_clickHandler(e:MouseEvent):void {
-			dispatchEvent(new DataEvent(ItemEventType.DELETE, {own:[], item: data}));
+			dispatchEvent(new DataEvent(ItemEventType.DELETE, {own: [], item: data}));
 		}
 	}
 }

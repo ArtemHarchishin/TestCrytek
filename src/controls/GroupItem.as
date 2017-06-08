@@ -1,7 +1,13 @@
-package {
+package controls {
+	import events.DataEvent;
+	import events.ItemEventType;
+
 	import flash.display.DisplayObject;
 	import flash.events.Event;
 	import flash.events.MouseEvent;
+
+	import GroupItemView;
+	import IGroupItemView;
 
 	public class GroupItem extends Control {
 		private var _items:Array;
@@ -133,7 +139,7 @@ package {
 		}
 
 		private function btnDelete_clickHandler(e:MouseEvent):void {
-			dispatchEvent(new DataEvent(ItemEventType.GROUP_DELETE, {own:[], item: data}));
+			dispatchEvent(new DataEvent(ItemEventType.GROUP_DELETE, {own: [], item: data}));
 		}
 
 		private function item_selectHandler(event:Event):void {

@@ -1,7 +1,11 @@
-package {
+package controls {
+	import datas.Collection;
+
 	import flash.display.Sprite;
 	import flash.events.Event;
 	import flash.utils.getQualifiedClassName;
+
+	import View;
 
 	public class Control extends Sprite {
 

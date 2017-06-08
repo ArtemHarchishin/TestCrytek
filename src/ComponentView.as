@@ -1,6 +1,5 @@
 ﻿package {
 	import flash.display.MovieClip;
-	import flash.events.Event;
 
 	public class ComponentView extends View {
 		private var _listContainer:MovieClip;

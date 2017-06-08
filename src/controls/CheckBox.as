@@ -1,5 +1,10 @@
-package {
+package controls {
+	import events.DataEvent;
+	import events.ItemEventType;
+
 	import flash.events.MouseEvent;
+
+	import CheckBoxView;
 
 	public class CheckBox extends Control {
 
