@@ -1,32 +1,47 @@
 package {
+	import flash.display.DisplayObject;
+	import flash.events.Event;
 	import flash.events.MouseEvent;
 
 	public class GroupItem extends Control {
 		private var _items:Array;
-		private var _view:GroupItemView;
+		private var _view:IGroupItemView;
 
 		override public function set selected(value:Boolean):void {
-			if (_selected != value){
+			if (_selected != value) {
 				_selected = value;
 				_view.selected = value;
 			}
 		}
 
 		override public function get height():Number {
-			if (!selected) return _view.hittingArea.height;
-			if (!_items.length) return _view.hittingArea.height;
-			return super.height;
+			var value:Number = 0;
+			if (!selected || _items.length == 0) {
+				value = _view.height;
+			} else if (_items.length > 0) {
+				for (var i:int = 0; i < _items.length; i++) {
+					var item:Control = _items[i];
+					value += item.height;
+				}
+				value += _view.height;
+				value = Math.ceil(value);
+			} else {
+				value = super.height;
+			}
+			return value;
 		}
 
 		public function GroupItem(data:Object) {
+			itemType = Item;
+			viewType = GroupItemView;
 			super(data);
 		}
 
 		override protected function initialize():void {
-			_view = new GroupItemView();
+			_view = IGroupItemView(createView());
 			_view.hittingArea.addEventListener(MouseEvent.CLICK, clickHandler);
 			_view.btnDelete.addEventListener(MouseEvent.CLICK, btnDelete_clickHandler);
-			addChild(_view);
+			addChild(DisplayObject(_view));
 		}
 
 		override protected function commitData():void {
@@ -38,7 +53,7 @@ package {
 		override protected function dispose():void {
 			resetView();
 			resetItems();
-			removeChild(_view);
+			removeChild(DisplayObject(_view));
 		}
 
 		public function reset():void {
@@ -52,9 +67,11 @@ package {
 			var length:uint = datum.length;
 			for (var i:int = 0; i < length; i++) {
 				var object:Object = datum[i];
-				var item:Control = new Item(object);
-				item.addEventListener(ItemEventType.SELECT, dispatchEvent);
-				item.addEventListener(ItemEventType.DELETE, dispatchEvent);
+				var item:Control = createItem(object);
+				item.addEventListener(ItemEventType.SELECT, item_selectHandler);
+				item.addEventListener(ItemEventType.DELETE, item_deleteHandler);
+				item.addEventListener(ItemEventType.GROUP_SELECT, dispatchEvent);
+				item.addEventListener(ItemEventType.GROUP_DELETE, itemGroup_deleteHandler);
 				_items.push(item);
 				_view.itemsContainer.addChild(item);
 			}
@@ -76,11 +93,12 @@ package {
 			}
 		}
 
-		private function updatePosition():void {
+		override public function updatePosition():void {
 			var shiftY:Number = 0;
 			var length:int = _items.length;
 			for (var i:int = 0; i < length; i++) {
 				var item:Control = _items[i];
+				item.updatePosition();
 				item.y = shiftY;
 				shiftY = item.y + item.height;
 			}
@@ -92,8 +110,10 @@ package {
 			var length:uint = _items.length;
 			for (var i:int = 0; i < length; i++) {
 				var item:Control = _items[i];
-				item.removeEventListener(ItemEventType.SELECT, dispatchEvent);
-				item.removeEventListener(ItemEventType.DELETE, dispatchEvent);
+				item.removeEventListener(ItemEventType.SELECT, item_selectHandler);
+				item.removeEventListener(ItemEventType.DELETE, item_deleteHandler);
+				item.removeEventListener(ItemEventType.GROUP_SELECT, dispatchEvent);
+				item.removeEventListener(ItemEventType.GROUP_DELETE, itemGroup_deleteHandler);
 			}
 		}
 
@@ -113,7 +133,21 @@ package {
 		}
 
 		private function btnDelete_clickHandler(e:MouseEvent):void {
-			dispatchEvent(new DataEvent(ItemEventType.GROUP_DELETE, this));
+			dispatchEvent(new DataEvent(ItemEventType.GROUP_DELETE, {own:[], item: data}));
+		}
+
+		private function item_selectHandler(event:Event):void {
+			dispatchEvent(event);
+		}
+
+		private function item_deleteHandler(e:DataEvent):void {
+			e.data['own'].push(data);
+			dispatchEvent(e);
+		}
+
+		private function itemGroup_deleteHandler(e:DataEvent):void {
+			e.data['own'].push(data);
+			dispatchEvent(e);
 		}
 	}
 }

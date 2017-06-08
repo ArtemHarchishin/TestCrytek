@@ -2,7 +2,7 @@ package {
 	import flash.display.MovieClip;
 	import flash.text.TextField;
 
-	public class GroupItemView extends View implements IGroupItemView {
+	public class CategoryItemView extends View implements IGroupItemView {
 		private var _tfLabel:TextField;
 		private var _hitArea:MovieClip;
 
@@ -39,7 +39,7 @@ package {
 			return _hitArea;
 		}
 
-		public function GroupItemView() {
+		public function CategoryItemView() {
 			_btnDelete = this["btn_delete"];
 			_hitArea = this["hit_area"];
 			_tfLabel = this["tf_label"];

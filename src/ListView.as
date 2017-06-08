@@ -4,7 +4,7 @@ package {
 	import flash.events.Event;
 	import flash.geom.Rectangle;
 
-	public class ListView extends View {
+	public class ListView extends View implements IListView {
 
 		private var _scrollBar:ScrollBarView;
 		private var _itemsContainer:MovieClip;

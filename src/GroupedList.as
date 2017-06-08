@@ -12,21 +12,8 @@ package {
 			return _selectedItem;
 		}
 
-		protected var _itemType:Class = GroupItem;
-
-		public function get itemType():Class {
-			return _itemType;
-		}
-
-		public function set itemType(value:Class):void {
-			if (_itemType == value) {
-				return;
-			}
-			_itemType = value;
-		}
-
-		public function GroupedList(data:GroupedCollection) {
-			super(data);
+		public function GroupedList() {
+			itemType = GroupItem;
 		}
 
 		override protected function initialize():void {
@@ -37,24 +24,31 @@ package {
 		}
 
 		override protected function commitData():void {
-			data.addEventListener(CollectionEventType.RESET, data_resetHandler);
-			data.addEventListener(CollectionEventType.REMOVE_GROUP_ITEM, data_removeGroupItemHandler);
-			data.addEventListener(CollectionEventType.REMOVE_ITEM, data_removeItemHandler);
-			data.addEventListener(CollectionEventType.ADD_ITEM, data_addItemHandler);
-			data.addEventListener(CollectionEventType.ADD_GROUP_ITEM, data_addGroupItemHandler);
 			reset();
 		}
 
 		override protected function dispose():void {
-			data.removeEventListener(CollectionEventType.RESET, data_resetHandler);
-			data.removeEventListener(CollectionEventType.REMOVE_GROUP_ITEM, data_removeGroupItemHandler);
-			data.removeEventListener(CollectionEventType.REMOVE_ITEM, data_removeItemHandler);
-			data.removeEventListener(CollectionEventType.ADD_ITEM, data_addItemHandler);
-			data.removeEventListener(CollectionEventType.ADD_GROUP_ITEM, data_addGroupItemHandler);
+			removeHandlersOfDataProvider();
 			resetView();
 			resetItems();
 			removeChild(_view);
 			_view = null;
+		}
+
+		override protected function addHandlersToDataProvider():void {
+			dataProvider.addEventListener(CollectionEventType.RESET, data_resetHandler);
+			dataProvider.addEventListener(CollectionEventType.REMOVE_GROUP_ITEM, data_removeGroupItemHandler);
+			dataProvider.addEventListener(CollectionEventType.REMOVE_ITEM, data_removeItemHandler);
+			dataProvider.addEventListener(CollectionEventType.ADD_ITEM, data_addItemHandler);
+			dataProvider.addEventListener(CollectionEventType.ADD_GROUP_ITEM, data_addGroupItemHandler);
+		}
+
+		override protected function removeHandlersOfDataProvider():void {
+			dataProvider.removeEventListener(CollectionEventType.RESET, data_resetHandler);
+			dataProvider.removeEventListener(CollectionEventType.REMOVE_GROUP_ITEM, data_removeGroupItemHandler);
+			dataProvider.removeEventListener(CollectionEventType.REMOVE_ITEM, data_removeItemHandler);
+			dataProvider.removeEventListener(CollectionEventType.ADD_ITEM, data_addItemHandler);
+			dataProvider.removeEventListener(CollectionEventType.ADD_GROUP_ITEM, data_addGroupItemHandler);
 		}
 
 		public function reset():void {
@@ -64,10 +58,10 @@ package {
 
 			_items = [];
 
-			var length:uint = data.getLength();
+			var length:uint = dataProvider.getLength();
 			for (var i:int = 0; i < length; i++) {
-				var object:Object = data.getItemAt(i);
-				var item:Control = new itemType(object);
+				var object:Object = dataProvider.getItemAt(i);
+				var item:Control = createItem(object);
 				item.addEventListener(ItemEventType.SELECT, item_selectHandler);
 				item.addEventListener(ItemEventType.DELETE, item_deleteHandler);
 				item.addEventListener(ItemEventType.GROUP_DELETE, itemGroup_deleteHandler);
@@ -84,11 +78,12 @@ package {
 			updatePosition();
 		}
 
-		protected function updatePosition():void {
+		override public function updatePosition():void {
 			var shiftY:Number = 0;
 			var length:int = _items.length;
 			for (var i:int = 0; i < length; i++) {
 				var item:Control = _items[i];
+				item.updatePosition();
 				item.y = shiftY;
 				shiftY = item.y + item.height;
 			}
@@ -121,12 +116,16 @@ package {
 			}
 		}
 
+		protected function data_removeItemHandler(e:DataEvent):void {
+			reset();
+		}
+
 		private function data_addItemHandler(e:DataEvent):void {
 			reset();
 		}
 
 		private function data_addGroupItemHandler(e:DataEvent):void {
-			var item:Control = new itemType(e.data);
+			var item:Control = createItem(e.data);
 			item.addEventListener(ItemEventType.DELETE, item_deleteHandler);
 			item.addEventListener(ItemEventType.SELECT, item_selectHandler);
 			item.addEventListener(ItemEventType.GROUP_DELETE, itemGroup_deleteHandler);
@@ -136,10 +135,6 @@ package {
 			_view.addItem(item);
 
 			updatePosition();
-		}
-
-		protected function data_removeItemHandler(e:DataEvent):void {
-			reset();
 		}
 
 		private function data_removeGroupItemHandler(e:DataEvent):void {
@@ -158,8 +153,12 @@ package {
 			updatePosition();
 		}
 
+		private function data_resetHandler(e:Event):void {
+			reset();
+		}
+
 		protected function item_deleteHandler(e:DataEvent):void {
-			data.removeItem((e.data as Control).data);
+			dataProvider.removeItem(e.data['own'], e.data['item']);
 		}
 
 		protected function item_selectHandler(e:DataEvent):void {
@@ -174,15 +173,11 @@ package {
 		}
 
 		private function itemGroup_deleteHandler(e:DataEvent):void {
-			data.removeGroupItem((e.data as Control).data);
+			dataProvider.removeItem(e.data['own'], e.data['item']);
 		}
 
 		private function itemGroup_selectHandler(e:DataEvent):void {
 			updatePosition();
-		}
-
-		private function data_resetHandler(e:Event):void {
-			reset();
 		}
 	}
 }

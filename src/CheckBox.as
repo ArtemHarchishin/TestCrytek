@@ -13,11 +13,12 @@ package {
 		}
 
 		public function CheckBox(data:Object) {
+			viewType = CheckBoxView;
 			super(data);
 		}
 
 		override protected function initialize():void {
-			_view = new CheckBoxView();
+			_view = CheckBoxView(createView());
 			_view.addEventListener(MouseEvent.CLICK, view_clickHandler);
 			addChild(_view);
 		}

@@ -4,6 +4,78 @@ package {
 	import flash.utils.getQualifiedClassName;
 
 	public class Control extends Sprite {
+
+		protected var _itemFactory:Function;
+
+		public function get itemFactory():Function {
+			return _itemFactory;
+		}
+
+		public function set itemFactory(value:Function):void {
+			if (_itemFactory === value) {
+				return;
+			}
+			_itemFactory = value;
+		}
+
+		protected var _itemType:Class;
+
+		public function get itemType():Class {
+			return _itemType;
+		}
+
+		public function set itemType(value:Class):void {
+			if (_itemType == value) {
+				return;
+			}
+			_itemType = value;
+		}
+
+		protected var _viewFactory:Function;
+
+		public function get viewFactory():Function {
+			return _viewFactory;
+		}
+
+		public function set viewFactory(value:Function):void {
+			if (_viewFactory === value) {
+				return;
+			}
+			_viewFactory = value;
+		}
+
+		protected var _viewType:Class;
+
+		public function get viewType():Class {
+			return _viewType;
+		}
+
+		public function set viewType(value:Class):void {
+			if (_viewType == value) {
+				return;
+			}
+			_viewType = value;
+		}
+
+		private var _dataProvider:Collection;
+
+		public function get dataProvider():Collection {
+			return _dataProvider;
+		}
+
+		public function set dataProvider(value:Collection):void {
+			if (_dataProvider == value) {
+				return;
+			}
+			if (_dataProvider) {
+				removeHandlersOfDataProvider();
+			}
+			_dataProvider = value;
+			if (_dataProvider) {
+				addHandlersToDataProvider();
+			}
+		}
+
 		protected var _selected:Boolean;
 
 		public function get selected():Boolean {
@@ -26,11 +98,38 @@ package {
 			return _isInitialized;
 		}
 
-		public function Control(data:Object) {
+		public function Control(data:Object = null) {
+			data ||= {};
 			_isInitialized = false;
 			_data = data;
 			addEventListener(Event.ADDED_TO_STAGE, addedToStageHandler);
 			addEventListener(Event.REMOVED_FROM_STAGE, removedFromStageHandler);
+		}
+
+		public function updatePosition():void {
+			// empty
+		}
+
+		protected function addHandlersToDataProvider():void {
+			// empty
+		}
+
+		protected function removeHandlersOfDataProvider():void {
+			// empty
+		}
+
+		protected function createItem(data:Object):Control {
+			if (itemFactory == null) {
+				return new itemType(data);
+			}
+			return itemFactory(data);
+		}
+
+		protected function createView():View {
+			if (viewFactory == null) {
+				return new viewType();
+			}
+			return viewFactory();
 		}
 
 		protected function dataToLabel(data:Object):String {

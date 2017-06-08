@@ -3,10 +3,9 @@ package {
 		protected var _view:ComponentView;
 
 		private var _checkBoxSort:CheckBox;
-		private var _list:List;
+		private var _list:GroupedList;
 
-		public function Component(data:Object) {
-			super(data);
+		public function Component() {
 		}
 
 		override protected function initialize():void {
@@ -16,11 +15,12 @@ package {
 			_checkBoxSort.addEventListener(ItemEventType.SELECT, checkBox_selectHandler);
 			_view.checkboxContainer.addChild(_checkBoxSort);
 
-			_list = new List(data as Collection);
-			_list.itemType = GroupItem;
-			_list.itemFactory = function ():Control {
-				var groupItem:GroupItem = new GroupItem();
-				groupItem.it
+			_list = new GroupedList();
+			_list.dataProvider = dataProvider;
+			_list.itemFactory = function (data:Object):Control {
+				var groupItem:GroupItem = new GroupItem(data);
+				groupItem.itemType = GroupItem;
+				groupItem.viewType = CategoryItemView;
 				return groupItem;
 			};
 

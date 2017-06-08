@@ -1,9 +1,10 @@
 package {
+	import flash.display.DisplayObject;
 	import flash.events.Event;
 
 	public class List extends Control {
 		protected var _items:Array;
-		protected var _view:ListView;
+		protected var _view:IListView;
 
 		protected var _selectedItem:Control;
 
@@ -12,45 +13,51 @@ package {
 			return _selectedItem;
 		}
 
-		protected var _itemType:Class = Item;
-
-		public function get itemType():Class {
-			return _itemType;
-		}
-
-		public function set itemType(value:Class):void {
-			if (_itemType == value) {
-				return;
-			}
-			_itemType = value;
-		}
-
-		public function List(data:Collection) {
-			super(data);
+		public function List() {
+			itemType = Item;
+			viewType = ListView;
 		}
 
 		override protected function initialize():void {
 			_items = null;
 			_selectedItem = null;
-			_view = new ListView();
-			addChild(_view);
+			_view = IListView(createView());
+			addChild(DisplayObject(_view));
 		}
 
 		override protected function commitData():void {
-			data.addEventListener(CollectionEventType.RESET, data_resetHandler);
-			data.addEventListener(CollectionEventType.REMOVE_ITEM, data_removeItemHandler);
-			data.addEventListener(CollectionEventType.ADD_ITEM, data_addItemHandler);
 			reset();
 		}
 
 		override protected function dispose():void {
-			data.removeEventListener(CollectionEventType.RESET, data_resetHandler);
-			data.removeEventListener(CollectionEventType.REMOVE_ITEM, data_removeItemHandler);
-			data.removeEventListener(CollectionEventType.ADD_ITEM, data_addItemHandler);
+			removeHandlersOfDataProvider();
 			resetView();
 			resetItems();
-			removeChild(_view);
+			removeChild(DisplayObject(_view));
 			_view = null;
+		}
+
+		override protected function addHandlersToDataProvider():void {
+			dataProvider.addEventListener(CollectionEventType.RESET, data_resetHandler);
+			dataProvider.addEventListener(CollectionEventType.REMOVE_ITEM, data_removeItemHandler);
+			dataProvider.addEventListener(CollectionEventType.ADD_ITEM, data_addItemHandler);
+		}
+
+		override protected function removeHandlersOfDataProvider():void {
+			dataProvider.removeEventListener(CollectionEventType.RESET, data_resetHandler);
+			dataProvider.removeEventListener(CollectionEventType.REMOVE_ITEM, data_removeItemHandler);
+			dataProvider.removeEventListener(CollectionEventType.ADD_ITEM, data_addItemHandler);
+		}
+
+		override public function updatePosition():void {
+			var shiftY:Number = 0;
+			var length:int = _items.length;
+			for (var i:int = 0; i < length; i++) {
+				var item:Control = _items[i];
+				item.updatePosition();
+				item.y = shiftY;
+				shiftY = item.y + item.height;
+			}
 		}
 
 		private function reset():void {
@@ -60,10 +67,10 @@ package {
 
 			_items = [];
 
-			var length:uint = data.getLength();
+			var length:uint = dataProvider.getLength();
 			for (var i:int = 0; i < length; i++) {
-				var object:Object = data.getItemAt(i);
-				var item:Control = new itemType(object);
+				var object:Object = dataProvider.getItemAt(i);
+				var item:Control = createItem(object);
 				item.addEventListener(ItemEventType.SELECT, item_selectHandler);
 				item.addEventListener(ItemEventType.DELETE, item_deleteHandler);
 				_items.push(item);
@@ -76,16 +83,6 @@ package {
 		private function reverse():void {
 			_items.reverse();
 			updatePosition();
-		}
-
-		protected function updatePosition():void {
-			var shiftY:Number = 0;
-			var length:int = _items.length;
-			for (var i:int = 0; i < length; i++) {
-				var item:Control = _items[i];
-				item.y = shiftY;
-				shiftY = item.y + item.height;
-			}
 		}
 
 		private function resetView():void {
@@ -114,7 +111,7 @@ package {
 		}
 
 		protected function item_deleteHandler(e:DataEvent):void {
-			data.removeItem((e.data as Item).data);
+			dataProvider.removeItem(e.data['item']);
 		}
 
 		protected function item_selectHandler(e:DataEvent):void {
@@ -145,7 +142,7 @@ package {
 		}
 
 		private function data_addItemHandler(e:DataEvent):void {
-			var item:Control = new itemType(e.data);
+			var item:Control = createItem(e.data);
 			item.addEventListener(ItemEventType.DELETE, item_deleteHandler);
 			item.addEventListener(ItemEventType.SELECT, item_selectHandler);
 

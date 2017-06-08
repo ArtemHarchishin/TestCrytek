@@ -55,10 +55,19 @@
 				{label: "21 ОБЖ"},
 				{label: "22 История"}
 			];
+
+			var hierarchicalData:Array = [
+				{ label: "Kerkira", items: [{ label: "Characters", items: [{label: "John"}, {label: "Phil"}]}, { label: "Events", items: [{label: "Psytrance party"}, {label: "Singing Fountains"}]}, { label: "Points of interest", items: [{label: "Drags"}, {label: "Rock'n'Roll"}]}]},
+				{ label: "Kiev", items: []},
+				{ label: "Lviv", items: []},
+				{ label: "Odessa", items: []},
+				{ label: "Rzecszow"}
+			];
 			var collection:Collection = new Collection(listData);
 			var groupedCollection:GroupedCollection = new GroupedCollection(groupedListData);
 
-			var componentControl:Component = new Component(collection);
+			var componentControl:Component = new Component();
+			componentControl.dataProvider = new GroupedCollection(hierarchicalData);
 			addChild(componentControl);
 
 			collection.addItem({label: "1"});
@@ -81,7 +90,8 @@
 			addChild(item);
 
 
-			var groupedList:GroupedList = new GroupedList(groupedCollection);
+			var groupedList:GroupedList = new GroupedList();
+			groupedList.dataProvider = groupedCollection;
 			groupedList.addEventListener(Event.SELECT, function (e:Event):void {
 				o(groupedList.selectedItem.data);
 			});
@@ -93,14 +103,15 @@
 			groupedCollection.addGroupItem({label: "new Group Item123"});
 			groupedCollection.addGroupItem({label: "123new Group Item", items:[{label:"new item 1"},{label:"new item 2"}]});
 
-			groupedCollection.removeGroupItem(groupedListData[2]);
+			groupedCollection.removeItem(groupedListData[2]);
 			groupedCollection.removeItem(groupedListData[2], {});
 
 			groupedCollection.addItem(groupedListData[2], {label: "added item2"});
 			groupedCollection.addItem(groupedListData[20], {label: "added item3"});
 			groupedCollection.addItem({label:"empty"}, {label: "added item 123"});
 
-			var list:List = new List(collection);
+			var list:List = new List();
+			list.dataProvider = collection;
 			list.addEventListener(Event.SELECT, function (e:Event):void {
 				o(list.selectedItem.data);
 			});

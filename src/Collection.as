@@ -28,12 +28,14 @@ package {
 			return data[index];
 		}
 
-		public function addItem(item:Object):void {
+		public function addItem(...args):void {
+			var item:Object = args[0];
 			data.push(item);
 			dispatchEventWith(CollectionEventType.ADD_ITEM, item);
 		}
 
-		public function removeItem(item:Object):void {
+		public function removeItem(...args):void {
+			var item:Object = args[0];
 			var i:int = data.indexOf(item);
 			if (i >= 0) {
 				data.splice(i, 1);
