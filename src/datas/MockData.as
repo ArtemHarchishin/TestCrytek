@@ -3,6 +3,8 @@ package datas {
 	import flash.net.URLLoader;
 	import flash.net.URLRequest;
 
+	import utils.execute;
+
 	public class MockData {
 
 		private var _lessonsJsonPath:String = "mock_data/lessons_mock_data.json";
@@ -22,7 +24,7 @@ package datas {
 				var loader:URLLoader = URLLoader(e.target);
 				var jsonArray:Object = JSON.parse(loader.data);
 				_data = jsonArray as Array;
-				callback && callback();
+				callback && execute(callback, _data);
 			});
 			loader.load(request);
 		}

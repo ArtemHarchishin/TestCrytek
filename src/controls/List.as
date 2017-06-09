@@ -6,12 +6,9 @@ package controls {
 	import flash.display.DisplayObject;
 	import flash.events.Event;
 
-	import IListView;
-	import ListView;
-
 	[Event(name="select", type="flash.events.Event")]
 
-	public class List extends Control {
+	public class List extends Control implements IList {
 		protected var _items:Array;
 		protected var _view:IListView;
 
@@ -22,7 +19,7 @@ package controls {
 			return _selectedItem;
 		}
 
-		public function List() {
+		public function List(data:Object = null) {
 			itemType = Item;
 			viewType = ListView;
 		}
@@ -50,12 +47,20 @@ package controls {
 			dataProvider.addEventListener(CollectionEventType.RESET, data_resetHandler);
 			dataProvider.addEventListener(CollectionEventType.REMOVE_ITEM, data_removeItemHandler);
 			dataProvider.addEventListener(CollectionEventType.ADD_ITEM, data_addItemHandler);
+			dataProvider.addEventListener(CollectionEventType.SORT_REVERSE, dataProvider_sortReverseHandler);
+			dataProvider.addEventListener(CollectionEventType.SORT_ALPHABETICAL, dataProvider_sortAlphabeticalHandler);
+			dataProvider.addEventListener(CollectionEventType.FILTER_ON, dataProvider_filterOnHandler);
+			dataProvider.addEventListener(CollectionEventType.FILTER_OFF, dataProvider_filterOffHandler);
 		}
 
 		override protected function removeHandlersOfDataProvider():void {
 			dataProvider.removeEventListener(CollectionEventType.RESET, data_resetHandler);
 			dataProvider.removeEventListener(CollectionEventType.REMOVE_ITEM, data_removeItemHandler);
 			dataProvider.removeEventListener(CollectionEventType.ADD_ITEM, data_addItemHandler);
+			dataProvider.removeEventListener(CollectionEventType.SORT_REVERSE, dataProvider_sortReverseHandler);
+			dataProvider.removeEventListener(CollectionEventType.SORT_ALPHABETICAL, dataProvider_sortAlphabeticalHandler);
+			dataProvider.removeEventListener(CollectionEventType.FILTER_ON, dataProvider_filterOnHandler);
+			dataProvider.removeEventListener(CollectionEventType.FILTER_OFF, dataProvider_filterOffHandler);
 		}
 
 		override public function updatePosition():void {
@@ -86,11 +91,6 @@ package controls {
 				_view.addItem(item);
 			}
 
-			updatePosition();
-		}
-
-		private function reverse():void {
-			_items.reverse();
 			updatePosition();
 		}
 
@@ -162,6 +162,23 @@ package controls {
 		}
 
 		private function data_resetHandler(e:Event):void {
+			reset();
+		}
+
+		private function dataProvider_sortReverseHandler(e:Event):void {
+			_items.reverse();
+			updatePosition();
+		}
+
+		private function dataProvider_sortAlphabeticalHandler(e:Event):void {
+			reset();
+		}
+
+		private function dataProvider_filterOnHandler(e:DataEvent):void {
+			reset();
+		}
+
+		private function dataProvider_filterOffHandler(e:DataEvent):void {
 			reset();
 		}
 	}

@@ -7,6 +7,8 @@ package datas {
 
 	public class Collection extends EventDispatcher {
 
+//		private var _backup:Array;
+
 		private var _data:Array;
 
 		public function get data():Array {
@@ -53,6 +55,36 @@ package datas {
 		public function reverse():void {
 			data.reverse();
 			dispatchEventWith(CollectionEventType.SORT_REVERSE);
+		}
+
+		public function sortAlphabetical():void {
+			data.sortOn("label");
+			dispatchEventWith(CollectionEventType.SORT_ALPHABETICAL);
+		}
+
+		public function filterOn(pattern:RegExp):void {
+//			var toFilter:Array;
+//			if (_backup) {
+//				toFilter = _backup;
+//			} else {
+//				_backup = data;
+//				toFilter = data;
+//			}
+//
+//			var filtered:Array = toFilter.filter(function (item:*, index:int, array:Array):Boolean {
+//				var label:String = item['label'];
+//				return pattern.test(label);
+//			});
+//
+//			data = filtered;
+//			dispatchEventWith(CollectionEventType.FILTER_ON);
+		}
+
+		public function filterOff():void {
+//			if (_backup) {
+//				data = _backup;
+//				dispatchEventWith(CollectionEventType.FILTER_OFF);
+//			}
 		}
 
 		protected function dispatchEventWith(type:String, data:Object = null):void {

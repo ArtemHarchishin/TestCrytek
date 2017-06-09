@@ -5,9 +5,7 @@ package controls {
 
 	import flash.events.Event;
 
-	import ListView;
-
-	public class GroupedList extends Control {
+	public class GroupedList extends Control implements IList {
 		protected var _items:Array;
 		protected var _view:ListView;
 
@@ -18,7 +16,7 @@ package controls {
 			return _selectedItem;
 		}
 
-		public function GroupedList() {
+		public function GroupedList(data:Object = null) {
 			itemType = GroupItem;
 		}
 
@@ -47,6 +45,8 @@ package controls {
 			dataProvider.addEventListener(CollectionEventType.REMOVE_ITEM, data_removeItemHandler);
 			dataProvider.addEventListener(CollectionEventType.ADD_ITEM, data_addItemHandler);
 			dataProvider.addEventListener(CollectionEventType.ADD_GROUP_ITEM, data_addGroupItemHandler);
+			dataProvider.addEventListener(CollectionEventType.SORT_REVERSE, dataProvider_sortReverseHandler);
+			dataProvider.addEventListener(CollectionEventType.SORT_ALPHABETICAL, dataProvider_sortAlphabeticalHandler);
 		}
 
 		override protected function removeHandlersOfDataProvider():void {
@@ -55,6 +55,8 @@ package controls {
 			dataProvider.removeEventListener(CollectionEventType.REMOVE_ITEM, data_removeItemHandler);
 			dataProvider.removeEventListener(CollectionEventType.ADD_ITEM, data_addItemHandler);
 			dataProvider.removeEventListener(CollectionEventType.ADD_GROUP_ITEM, data_addGroupItemHandler);
+			dataProvider.removeEventListener(CollectionEventType.SORT_REVERSE, dataProvider_sortReverseHandler);
+			dataProvider.removeEventListener(CollectionEventType.SORT_ALPHABETICAL, dataProvider_sortAlphabeticalHandler);
 		}
 
 		public function reset():void {
@@ -76,11 +78,6 @@ package controls {
 				_view.addItem(item);
 			}
 
-			updatePosition();
-		}
-
-		public function reverse():void {
-			_items.reverse();
 			updatePosition();
 		}
 
@@ -163,6 +160,11 @@ package controls {
 			reset();
 		}
 
+		private function dataProvider_sortReverseHandler(e:Event):void {
+			_items.reverse();
+			updatePosition();
+		}
+
 		protected function item_deleteHandler(e:DataEvent):void {
 			dataProvider.removeItem(e.data['own'], e.data['item']);
 		}
@@ -184,6 +186,10 @@ package controls {
 
 		private function itemGroup_selectHandler(e:DataEvent):void {
 			updatePosition();
+		}
+
+		private function dataProvider_sortAlphabeticalHandler(e:Event):void {
+			reset();
 		}
 	}
 }

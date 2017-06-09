@@ -5,8 +5,6 @@ package controls {
 	import flash.events.Event;
 	import flash.utils.getQualifiedClassName;
 
-	import View;
-
 	public class Control extends Sprite {
 
 		protected var _itemFactory:Function;
@@ -122,7 +120,7 @@ package controls {
 			// empty
 		}
 
-		protected function createItem(data:Object):Control {
+		protected function createItem(data:Object = null):Control {
 			if (itemFactory == null) {
 				return new itemType(data);
 			}
@@ -179,6 +177,8 @@ package controls {
 			removeEventListener(Event.REMOVED_FROM_STAGE, removedFromStageHandler);
 			dispose();
 			_data = null;
+			_itemType = null;
+			_itemFactory = null;
 			_isInitialized = false;
 		}
 	}

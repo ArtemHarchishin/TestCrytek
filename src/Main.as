@@ -1,5 +1,6 @@
 ﻿package {
 
+	import controls.Control;
 	import controls.Lessons;
 	import controls.MotoStore;
 
@@ -9,14 +10,19 @@
 
 	import flash.display.MovieClip;
 
+	import utils.moveTo;
+
 	public class Main extends MovieClip {
 
 		public function Main() {
-//			createLessonsList();
-			createMotoStoreList();
+			var lessons:Control = createLessonsList();
+			var moto:Control = createMotoStoreList();
+			moveTo(moto, 350, 0);
 		}
 
-		private function createMotoStoreList():void {
+		private function createMotoStoreList():Control {
+			var motoStore:MotoStore = new MotoStore();
+
 			var mockData:MockData = new MockData();
 			mockData.getMotoStoreData(function ():void {
 				var arr:Array = [];
@@ -38,19 +44,20 @@
 					}
 				}
 
-				var motoStore:MotoStore = new MotoStore();
 				motoStore.dataProvider = new GroupedCollection(arr);
 				addChild(motoStore);
 			});
+			return motoStore;
 		}
 
-		private function createLessonsList():void {
+		private function createLessonsList():Control {
+			var lessons:Lessons = new Lessons();
 			var mockData:MockData = new MockData();
 			mockData.getLessonsData(function ():void {
-				var lessons:Lessons = new Lessons();
 				lessons.dataProvider = new Collection(mockData.data);
 				addChild(lessons);
 			});
+			return lessons;
 		}
 	}
 }
